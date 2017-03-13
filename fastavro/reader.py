@@ -286,12 +286,15 @@ def read_union(fo, writer_schema, reader_schema=None):
     if reader_schema:
         # Handle case where the reader schema is just a single type (not union)
         if not isinstance(reader_schema, list):
-            if match_types(writer_schema[index], reader_schema):
-                return read_data(fo, writer_schema[index], reader_schema)
+            match_schemas(writer_schema[index], reader_schema)
+            return read_data(fo, writer_schema[index], reader_schema)
         else:
             for schema in reader_schema:
-                if match_types(writer_schema[index], schema):
-                    return read_data(fo, writer_schema[index], schema)
+                try:
+                    match_schemas(writer_schema[index], schema)
+                except SchemaResolutionError:
+                    continue
+                return read_data(fo, writer_schema[index], schema)
         msg = 'schema mismatch: %s not found in %s' % \
             (writer_schema, reader_schema)
         raise SchemaResolutionError(msg)
