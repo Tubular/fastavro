@@ -378,8 +378,6 @@ def read_data(fo, writer_schema, reader_schema=None):
     """Read data from file object according to schema."""
 
     record_type = extract_record_type(writer_schema)
-    if reader_schema and record_type in AVRO_TYPES:
-        match_schemas(writer_schema, reader_schema)
     try:
         return READERS[record_type](fo, writer_schema, reader_schema)
     except StructError:
